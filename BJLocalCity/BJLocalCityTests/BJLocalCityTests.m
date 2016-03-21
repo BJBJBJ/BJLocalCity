@@ -3,7 +3,7 @@
 //  BJLocalCityTests
 //
 //  Created by zbj-mac on 16/3/18.
-//  Copyright © 2016年 张保金. All rights reserved.
+//  Copyright © 2016年 zbj. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

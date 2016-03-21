@@ -93,7 +93,9 @@ static BJLocalCity* instance;
      {
             if (error) {
 
-              self.failure(error);
+                if (self.failure) {
+                    self.failure(error);
+                }
               return ;
             }
          
@@ -101,7 +103,10 @@ static BJLocalCity* instance;
         CLPlacemark *placemark=[placemarks firstObject];
          if (placemark.addressDictionary[@"City"]){
           
+             if (self.localCallBack) {
             self.localCallBack(placemark.addressDictionary[@"City"]);
+             }
+         
             }
     
      }];
@@ -109,6 +114,9 @@ static BJLocalCity* instance;
 }
 -(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
     
-    self.failure(error);
+    if (self.failure) {
+        self.failure(error);
+    }
+    
 }
 @end
