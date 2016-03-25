@@ -12,8 +12,9 @@
 @interface BJLocalCity()<CLLocationManagerDelegate>
 
 @property (nonatomic , strong)CLLocationManager *locationManager;
-@property(nonatomic,copy)localCallBack localCallBack;
+@property(nonatomic,copy)localCityCallBack localCallBack;
 @property(nonatomic,copy)failure failure;
+@property(nonatomic,copy)localAddressCallBack localAddressCallBack;
 @end
 
 @implementation BJLocalCity
@@ -28,7 +29,22 @@ static BJLocalCity* instance;
     }
     return instance;
 }
-+(void)startLocalCitySuccess:(localCallBack)localCallBack failure:(failure)failure{
++(void)startLocalAddressSuccess:(localAddressCallBack)localAddressCallBack failure:(failure)failure{
+    
+    BJLocalCity *local=[BJLocalCity Shared];
+    [local startLocation];
+    
+    local.localAddressCallBack=^(NSDictionary*dict){
+        localAddressCallBack(dict);
+    };
+    
+    local.failure=^(NSError *error){
+        
+        failure(error);
+    };
+
+}
++(void)startLocalCitySuccess:(localCityCallBack)localCallBack failure:(failure)failure{
     
     BJLocalCity *local=[BJLocalCity Shared];
     [local startLocation];
@@ -87,6 +103,7 @@ static BJLocalCity* instance;
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
     
     [self.locationManager stopUpdatingLocation];//结束定位
+    //反编码
     CLGeocoder *Geocoder=[[CLGeocoder alloc] init];
     CLLocation * location=[locations lastObject];
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
@@ -99,8 +116,15 @@ static BJLocalCity* instance;
               return ;
             }
          
-         //反编码 传出城市
+         //传出地址
         CLPlacemark *placemark=[placemarks firstObject];
+         
+         if (placemark.addressDictionary&&self.localAddressCallBack) {
+             self.localAddressCallBack(placemark.addressDictionary);
+             return;
+         }
+         
+         
          if (placemark.addressDictionary[@"City"]&&self.localCallBack){
            self.localCallBack(placemark.addressDictionary[@"City"]);
                  return;
