@@ -1,6 +1,6 @@
 //
-//  ZCLocalCity.m
-//  ZCInsurance
+//  BJLocalCity.m
+//  BJLocalCity
 //
 //  Created by zbj-mac on 16/3/18.
 //  Copyright © 2016年 zbj. All rights reserved.
@@ -76,6 +76,7 @@ static BJLocalCity* instance;
    if ([CLLocationManager authorizationStatus]==kCLAuthorizationStatusAuthorizedAlways||[CLLocationManager authorizationStatus]==kCLAuthorizationStatusAuthorizedWhenInUse){
         
         [self.locationManager startUpdatingLocation];
+       return;
     }
     
     
@@ -91,22 +92,18 @@ static BJLocalCity* instance;
     CLLocation *newLocation = [[CLLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
     [Geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error)
      {
-            if (error) {
-
-                if (self.failure) {
-                    self.failure(error);
-                }
+            if (error&&self.failure) {
+                
+            self.failure(error);
+           
               return ;
             }
          
          //反编码 传出城市
         CLPlacemark *placemark=[placemarks firstObject];
-         if (placemark.addressDictionary[@"City"]){
-          
-             if (self.localCallBack) {
-            self.localCallBack(placemark.addressDictionary[@"City"]);
-             }
-         
+         if (placemark.addressDictionary[@"City"]&&self.localCallBack){
+           self.localCallBack(placemark.addressDictionary[@"City"]);
+                 return;
             }
     
      }];
