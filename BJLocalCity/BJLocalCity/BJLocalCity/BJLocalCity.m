@@ -35,12 +35,16 @@ static BJLocalCity* instance;
     [local startLocation];
     
     local.localAddressCallBack=^(NSDictionary*dict){
+        if (localAddressCallBack) {
         localAddressCallBack(dict);
+        }
     };
     
     local.failure=^(NSError *error){
         
-        failure(error);
+        if (failure) {
+            failure(error);
+        }
     };
 
 }
@@ -50,11 +54,16 @@ static BJLocalCity* instance;
     [local startLocation];
    local.localCallBack=^(NSString*city){
     
+       if (localCallBack) {
         localCallBack(city);
+       }
+   
     };
     local.failure=^(NSError *error){
-        
+        if (failure) {
         failure(error);
+        }
+     
     };
 }
 
