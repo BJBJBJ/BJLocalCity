@@ -30,40 +30,16 @@ static BJLocalCity* instance;
     return instance;
 }
 +(void)startLocalAddressSuccess:(localAddressCallBack)localAddressCallBack failure:(failure)failure{
-    
     BJLocalCity *local=[BJLocalCity Shared];
     [local startLocation];
-    
-    local.localAddressCallBack=^(NSDictionary*dict){
-        if (localAddressCallBack) {
-        localAddressCallBack(dict);
-        }
-    };
-    
-    local.failure=^(NSError *error){
-        
-        if (failure) {
-            failure(error);
-        }
-    };
-
+    local.localAddressCallBack=localAddressCallBack;
+    local.failure=failure;
 }
 +(void)startLocalCitySuccess:(localCityCallBack)localCallBack failure:(failure)failure{
-    
     BJLocalCity *local=[BJLocalCity Shared];
     [local startLocation];
-   local.localCallBack=^(NSString*city){
-       if (localCallBack) {
-        localCallBack(city);
-       }
-    };
-    
-    local.failure=^(NSError *error){
-        if (failure) {
-        failure(error);
-        }
-     
-    };
+    local.localCallBack=localCallBack;
+    local.failure=failure;
 }
 
 /**
@@ -99,14 +75,11 @@ static BJLocalCity* instance;
         [self.locationManager startUpdatingLocation];
        return;
     }
-    
-    
-    
+
 }
 #pragma mark----定位代理-经纬度反编码----
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
-    
     [self.locationManager stopUpdatingLocation];//结束定位
     //反编码
     CLGeocoder *Geocoder=[[CLGeocoder alloc] init];
@@ -115,12 +88,10 @@ static BJLocalCity* instance;
     [Geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error)
      {
             if (error&&self.failure) {
-                
-            self.failure(error);
-           
-              return ;
-            }
-         
+                self.failure(error);
+                return ;
+             }
+
          //传出地址
         CLPlacemark *placemark=[placemarks firstObject];
          
