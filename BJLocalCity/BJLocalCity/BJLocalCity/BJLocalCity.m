@@ -53,12 +53,11 @@ static BJLocalCity* instance;
     BJLocalCity *local=[BJLocalCity Shared];
     [local startLocation];
    local.localCallBack=^(NSString*city){
-    
        if (localCallBack) {
         localCallBack(city);
        }
-   
     };
+    
     local.failure=^(NSError *error){
         if (failure) {
         failure(error);
@@ -71,14 +70,11 @@ static BJLocalCity* instance;
  *  开始定位
  */
 -(void)startLocation{
-
-    
     self.locationManager=[[CLLocationManager alloc] init];
     self.locationManager.delegate=self;
     self.locationManager.desiredAccuracy=kCLLocationAccuracyBest;
     CLLocationDistance distance=10.0;
     self.locationManager .distanceFilter=distance;
-    
 
     if (![CLLocationManager locationServicesEnabled]){//定位不可用
         NSLog(@"--%@--定位服务不可用",[self class]);
@@ -90,10 +86,10 @@ static BJLocalCity* instance;
        [self.locationManager startUpdatingLocation];//开启定位
         return;
     }
-    
+    //8.0以上
     if ([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){//未确定授权状态
         
-        [self.locationManager requestAlwaysAuthorization];//设置状态
+        [self.locationManager requestAlwaysAuthorization];//设置授权状态
         [self.locationManager startUpdatingLocation];
         
         return;
@@ -133,12 +129,10 @@ static BJLocalCity* instance;
              return;
          }
          
-         
          if (placemark.addressDictionary[@"City"]&&self.localCallBack){
            self.localCallBack(placemark.addressDictionary[@"City"]);
                  return;
             }
-    
      }];
 
 }
@@ -147,6 +141,5 @@ static BJLocalCity* instance;
     if (self.failure) {
         self.failure(error);
     }
-    
 }
 @end
